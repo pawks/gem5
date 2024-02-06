@@ -1,0 +1,8 @@
+# -*- mode:python -*-
+#    Copyright (c) 2024 University of Toronto All Rights Reserved. See license filefor more details.
+#    Created On:  Tue Feb 06, 2024 18:52:01 
+#    Author(s): 
+#    - Pawan Kumar Sanjaya<pawan.sanjaya@mail.utoronto.ca> gitlab: @pawks github: @pawks
+Import('*')
+SimObject('Privacy.py', sim_objects=["PPU"])
+Source("ppu.cc")
