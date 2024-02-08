@@ -6,3 +6,4 @@
 Import('*')
 SimObject('Privacy.py', sim_objects=["PPU"])
 Source("ppu.cc")
+DebugFlag("PPU")
