@@ -13,7 +13,7 @@
 #include "mem/packet.hh"
 #include "params/PPU.hh"
 
-#define num_regs_per_device 2
+#define num_regs_per_device 3
 constexpr double max_value {std::numeric_limits<double>::max()}; 
 constexpr double min_value {std::numeric_limits<double>::min()}; 
 
@@ -21,7 +21,7 @@ namespace gem5{
     class PPU: public BasicPioDevice
     {
         protected:
-            uint64_t* cregs;
+            double* cregs;
             std::default_random_engine generator;
       
         public:

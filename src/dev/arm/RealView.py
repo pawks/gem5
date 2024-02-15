@@ -49,7 +49,10 @@ from m5.objects.Device import (
     BasicPioDevice,
     DmaDevice,
     IsaFake,
-    PioDevice,
+    PioDevice
+)
+from m5.objects.Privacy import (
+        PPU,
 )
 from m5.objects.Display import (
     Display,
@@ -857,6 +860,8 @@ class RealView(Platform):
                 mem_ports.append(mem.port)
 
     def _attach_device(self, device, bus, dma_ports=None):
+        print("Attaching Devices")
+        print(device.type)
         if hasattr(device, "pio"):
             device.pio = bus.mem_side_ports
         if hasattr(device, "dma"):
@@ -1410,6 +1415,8 @@ class VExpress_GEM5_Base(RealView):
         ),
     ]
 
+    ppu = [PPU(pio_addr=0x1C180000)]
+
     kmi0 = Pl050(
         pio_addr=0x1C060000, interrupt=ArmSPI(num=44), ps2=PS2Keyboard()
     )
@@ -1457,6 +1464,7 @@ class VExpress_GEM5_Base(RealView):
     )
 
     def _off_chip_devices(self):
+        print("Returning Offchip")
         return [
             self.realview_io,
             self.kmi0,
@@ -1470,7 +1478,7 @@ class VExpress_GEM5_Base(RealView):
             self.clock24MHz,
             self.vio[0],
             self.vio[1],
-        ] + self.uart
+        ] + self.uart + self.ppu
 
     def _off_chip_memory(self):
         return [self.flash1, self.vram]
