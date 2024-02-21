@@ -22,6 +22,7 @@ namespace gem5{
     {
         protected:
             double* cregs;
+            std::ifstream in{"/scratch1/ldp/Human-Activity-Recognition-Using-Accelerometer-Data-and-CNN/WISDM_ar_v1.1/WISDM_ar_v1.1_raw.txt"};
             std::default_random_engine generator;
       
         public:

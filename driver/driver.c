@@ -15,17 +15,7 @@ MOUDLE_LICENCE("GPL");
 MODULE_AUTHOR(AUTOHOR);
 
 int majornum;
-static int drv_open(struct inone *inode, struct file *fp);
-static ssize_t drv_read(struct file *fp, uint64_t buf, loff_t *off_set);
-static ssize_t drv_write(struct file *fp, const uint64_t buf, loff_t *off_set);
-static int drv_rel(struct inode *inode, struct file *fp);
 
-static struct file_operations fileops = {
-    .read=drv_read,
-    .write=drv_write,
-    .open=drv_open,
-    .release=drv_rel,
-};
 
 static struct platform_device my_platform_device = {
     .name=DEVICE_NAME,
@@ -50,9 +40,6 @@ static int drv_open(struct inone *inode, struct file *fp){
     printk(KERN_INFO "PPU Device Open.")
         return 0;
 }
-static ssize_t drv_read(struct file *fp, uint64_t buf, loff_t *off_set);
-static ssize_t drv_write(struct file *fp, const uint64_t buf, loff_t *off_set);
-static int drv_rel(struct inode *inode, struct file *fp);
 
 module_init(drv_init);
 module_exit(drv_exit);

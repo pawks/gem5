@@ -7,6 +7,7 @@
 #include <random>
 #include <limits>
 #include <math.h>
+#include <vector>
 #include <cstdlib>
 #include "dev/privacy/ppu.hh"
 
@@ -16,11 +17,27 @@
 #include "mem/packet_access.hh"
 #include "sim/system.hh"
 
-
+using namespace std;
 
 namespace gem5{
-template <typename T>
-auto caster(T value){return reinterpret_cast<std::tuple_element_t<size_t(log2(sizeof(T))), std::tuple<uint8_t,
+
+    vector<string> split(const string& str, const string& delim)
+    {
+        vector<string> result;
+        size_t start = 0;
+    
+        for (size_t found = str.find(delim); found != string::npos; found = str.find(delim, start))
+        {
+            result.emplace_back(str.begin() + start, str.begin() + found);
+            start = found + delim.size();
+        }
+        if (start != str.size())
+            result.emplace_back(str.begin() + start, str.end());
+        return result;      
+    } 
+
+    template <typename T>
+    auto caster(T value){return reinterpret_cast<std::tuple_element_t<size_t(log2(sizeof(T))), std::tuple<uint8_t,
                                                                                                       uint16_t,
                                                                                                       uint32_t,
                                                                                                       uint64_t>>&>(value);}
@@ -46,7 +63,7 @@ auto caster(T value){return reinterpret_cast<std::tuple_element_t<size_t(log2(si
         pkt->makeAtomicResponse();
         assert(pkt->getAddr() >= pioAddr && pkt->getAddr() < pioAddr + pioSize);
         double elem = 256.0;
-        uint64_t addr = pkt->getAddr()-pioAddr;
+                uint64_t addr = pkt->getAddr()-pioAddr;
         DPRINTF(PPU, "read to address va=%#x offset=%#x size=%d\n", pkt->getAddr(),addr, pkt->getSize());
         if (addr < 8*params().num_devices*num_regs_per_device)
             elem = cregs[addr/8];
@@ -61,6 +78,11 @@ auto caster(T value){return reinterpret_cast<std::tuple_element_t<size_t(log2(si
                 pkt->setBadAddress();
             }
             else {
+                std::string str;
+                in >> str;
+                std::string delim = ",";
+                auto tokens = split(str,delim);
+                elem = stod(tokens[3]);
                 std::uniform_real_distribution<double> distribution(-2,2);
                 cregs[(device*num_regs_per_device)+1] += cregs[(device*num_regs_per_device)];
                 double stdev = cregs[(device*num_regs_per_device)]; 
