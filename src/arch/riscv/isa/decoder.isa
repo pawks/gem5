@@ -1059,6 +1059,28 @@ decode QUADRANT default Unknown::unknown() {
                 }
             }
         }
+        0x02: decode FUNCT3 {
+            format Store {
+                0x2: psw({{
+                    PSTATUS pstatus = xc -> readMiscReg(MISCREG_PSTATUS);
+                    if (pstatus.mode != 1)
+                        return std::make_shared<IllegalInstFault>(
+                                "Not in Private Access mode", machInst);
+                    Mem_uw = Rs2_uw;
+                }});
+                0x3: decode RVTYPE {
+                    0x1: psd({{
+                        PSTATUS pstatus = xc -> readMiscReg(MISCREG_PSTATUS);
+                        if (pstatus.mode != 1)
+                            return std::make_shared<IllegalInstFault>(
+                                    "Not in Private Access mode", machInst);
+                        Mem_ud = Rs2_ud;
+                    }});
+                }
+            }
+        }
+
+
 
         0x09: decode FUNCT3 {
             format Store {
@@ -4581,6 +4603,23 @@ decode QUADRANT default Unknown::unknown() {
             NPC = rvZext(PC + imm);
         }}, IsDirectControl, IsUncondControl);
 
+        0x0a: decode FUNCT3 {
+            format SystemOp {
+                0x0: penter({{
+                    uint64_t rs2_bits = RS2;
+                    PSTATUS pstatus = xc->readMiscReg(MISCREG_PSTATUS);
+                    pstatus.mode = 1;
+                    pstatus.source = RS2;
+                    xc->setMiscReg(MISCREG_PSTATUS,pstatus);
+                }}, IsSerializeAfter, IsNonSpeculative, No_OpClass);
+                0x1: pret({{
+                    PSTATUS pstatus = xc->readMiscReg(MISCREG_PSTATUS);
+                    pstatus.mode = 0;
+                    pstatus.source = RS2;
+                    xc->setMiscReg(MISCREG_PSTATUS,pstatus);
+             }} , IsSerializeAfter, IsNonSpeculative, No_OpClass);
+            }
+        }
         0x1c: decode FUNCT3 {
             format SystemOp {
                 0x0: decode FUNCT7 {
